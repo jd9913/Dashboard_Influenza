@@ -1,0 +1,25 @@
+<<<<<<< HEAD
+
+.vs/HospitalCapacity/config/applicationhost.config
+.vs/HospitalCapacity/v16/.suo
+<<<<<<< HEAD
+.vs/HospitalCapacityDashboard/config/applicationhost.config
+.vs/HospitalCapacityDashboard/v16/.suo
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+=======
+.vs/slnx.sqlite
+
+.vs/HospitalCapacityDashboard/config/applicationhost.config
+.vs/HospitalCapacityDashboard/v16/.suo
+>>>>>>> feature/initial-setup
+RE_ current data and need chart feedback.pdf
+data_Aug18-Aug24/EMResource Bed Poll workbook.csv
+
+=======
+node_modules
+*.xlsx
+*.csv
+
+*.pdf
+>>>>>>> initialFiles
