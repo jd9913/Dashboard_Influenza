@@ -15,44 +15,92 @@ getCurrentDay();
 const color1 = '#FF00FF';
 const color2 = '#00FACC';
 const color3 = '#FFCC00';
-const color4='#00ccaf';
+const color4 = '#00ccaf';
 const fontColor = '#504F4F';
 
 
-const svg=d3.select("#chart-area").append("svg")
-.attr("width", 400)
-.attr("height", 400)
+const MARGIN = { LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 500 }
+const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
+const HEIGHT = 1000 - MARGIN.TOP - MARGIN.BOTTOM
 
 
-d3.csv("../Data/Influenza.csv").then(data=>{
+const svg = d3.select("#chart-area").append("svg")
+    .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
+    .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
+
+const g = svg.append("g")
+    .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
     
-    data.forEach((d)=>{
-        d.influenza_ED=Number(d.influenza_ED);
-        // d.influenza_ICU=Number(d.influenza_ICU)
-        // d.influenza_inpatients=Number(d.influenza_inpatients)
-        // d.influenza_vent=Number(d.influenza_vent)
+    
+
+    //X Label
+g.append("text")
+.attr("class", "x_axis-label")
+
+// .attr("x", WIDTH/2)
+// .attr("y", HEIGHT+110)
+.style("font", "20px times")
+.attr("text-anchor", "middle")
+.text("Date of Visit")
+
+//Y Label
+
+g.append("text")
+.attr("class", "y_axis-label")
+.attr("x", -(HEIGHT/2))
+.attr("y", -60)
+.attr("font-size", "20px")
+.attr("text-anchor", "middle")
+.attr("transform", "rotate(-90)")
+.text("2020 Suspected or Positive Influenza ED")
+
+
+d3.csv("../Data/Influenza.csv").then(data => {
+    data.forEach(d => {
+        d.influenza_ED = Number(d.influenza_ED)
+        d.DataDate=new Date(d.DataDate)
+ 
     })
+  
+    const x = d3.scaleBand()
+        .domain(data.map(d => d.DataDate))
+        .range([0, WIDTH])
+        .paddingInner(0.3)
+        .paddingOuter(0.2)
 
-    const y =d3.scaleLinear()
-    .domain([0, 1000])
-    .range([0, 1000])
+        
 
-    const rects=svg.selectAll("rect")
-    .data(data)
+    const y = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.influenza_ED)])
+        .range([HEIGHT, 0])
+
+     
+        const xAxisCall=d3.axisBottom(x)
+        g.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${HEIGHT})`)
+        .call(xAxisCall)
+        .selectAll("text")
+        .attr("y", "25")
+        .attr("x", "-5")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-40)")
+
+        const yAxisCall=d3.axisLeft(y)
+        .ticks(d=>d.influenza_ED)
+        .tickFormat(d=>d+"patients")
+        g.append("g")
+        .attr("class", "y-axis")
+        .call(yAxisCall)
+
+    const rects = g.selectAll("rect")
+        .data(data)
 
     rects.enter().append("rect")
-    .attr("y", 0)
-.attr("x", ((d,i)=>{
-    (i*60)
-})
-    .attr("height", ((d)=>{
-        d.influenza_ED
-    })
-    .attr("fill", "blue")
-
-   console.log(d);
-    
-}).catch(err=>{
-console.log(err);
+        .attr("y", d=> y(d.influenza_ED))
+        .attr("x", (d) => x(d.DataDate))
+        .attr("width", x.bandwidth)
+        .attr("height", d => HEIGHT-y(d.influenza_ED))
+        .attr("fill", "blue")
 
 })
