@@ -26,7 +26,7 @@ const svg=d3.select("#chart-area").append("svg")
 
 d3.csv("../Data/Influenza.csv").then(data=>{
     
-    data.forEach(d=>{
+    data.forEach((d)=>{
         d.influenza_ED=Number(d.influenza_ED);
         // d.influenza_ICU=Number(d.influenza_ICU)
         // d.influenza_inpatients=Number(d.influenza_inpatients)
@@ -42,8 +42,12 @@ d3.csv("../Data/Influenza.csv").then(data=>{
 
     rects.enter().append("rect")
     .attr("y", 0)
-    .attr("x", (d,i)=>(i*60))
-    .attr("height", d=>d.influenza_ED)
+.attr("x", ((d,i)=>{
+    (i*60)
+})
+    .attr("height", ((d)=>{
+        d.influenza_ED
+    })
     .attr("fill", "blue")
 
    console.log(d);
