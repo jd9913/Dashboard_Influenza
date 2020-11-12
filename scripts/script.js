@@ -19,8 +19,8 @@ const color4 = '#00ccaf';
 const fontColor = '#504F4F';
 
 
-const MARGIN = { LEFT: 100, RIGHT: 10, TOP: 10, BOTTOM: 500 }
-const WIDTH = 800 - MARGIN.LEFT - MARGIN.RIGHT
+const MARGIN = { LEFT: 100, RIGHT: 100, TOP: 100, BOTTOM: 500 }
+const WIDTH = 1000 - MARGIN.LEFT - MARGIN.RIGHT
 const HEIGHT = 1000 - MARGIN.TOP - MARGIN.BOTTOM
 
 

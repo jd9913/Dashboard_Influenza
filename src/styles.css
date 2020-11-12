@@ -1,16 +1,16 @@
-﻿*{
+﻿/* *{
     font-size: 62.5%;
-}
+} */
 
-
+/* 
 body{
-    font-size: 10rem;
-}
+    font-size: 20px;
+} */
 
-
+/* 
 .jumbotron {
     font-size: 5em;
-}
+} */
 
 
 #currentDay{
@@ -39,13 +39,13 @@ body{
     height: 100%;
 }
 
-panel-footer{
+/* panel-footer{
     font-size: 2rem;
-}
+} */
 
 .panel panel-default {
     padding: 2em;
-    font-size: 20rem;
+    /* font-size: 20rem; */
 }
 
 .col-sm-12 {
