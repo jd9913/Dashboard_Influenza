@@ -20,6 +20,7 @@ const color3 = '#FFCC00';
 const color4 = '#00ccaf';
 const fontColor = '#504F4F';
 
+
 const dateFilter= new Date(2020,09,20).toLocaleDateString('month');
 
 
@@ -33,10 +34,15 @@ const HEIGHT = 1000 - MARGIN.TOP - MARGIN.BOTTOM
 const svg = d3.select("#chart-area").append("svg")
     .attr("width", WIDTH + MARGIN.LEFT + MARGIN.RIGHT)
     .attr("height", HEIGHT + MARGIN.TOP + MARGIN.BOTTOM)
+    .style("background-color", "white")
+
 
 const g = svg.append("g")
     .attr("transform", `translate(${MARGIN.LEFT}, ${MARGIN.TOP})`)
+    .style("background-color", "grey")
 
+
+ 
 
 
 //X Label
@@ -63,7 +69,7 @@ g.append("text")
    
   
 
-let data=d3.csv("../Data/Influenza.csv").then(data => {
+const data=d3.csv("../Data/Influenza.csv").then(data => {
     data.forEach(d => {
         d.influenza_ED = Number(d.influenza_ED);
         d.DataDate=new Date(d.DataDate).toLocaleDateString('month');
@@ -71,11 +77,18 @@ let data=d3.csv("../Data/Influenza.csv").then(data => {
         d.influenza_vent = Number(d.influenza_vent);
         d.influenza_inpatients = Number(d.influenza_inpatients);
   
-    return (d.influenza_ED, d.influenza_ICU, d.influenza_inpatients, d.influenza_vent, d.DataDate);
+    return [data.influenza_ED, data.influenza_ICU, data.influenza_inpatients, data.influenza_vent, data.DataDate];
 
     });
-});
 
+
+// const dates=data.map(function(object){
+//     return object.DataDate
+// })
+
+// const fluED=data.map(function(object){
+//     return object.influenza_ED
+// })
 
 //     let groupedVariables=d3.group(variables, d=>d.name)
 // console.log(groupedVariables);
@@ -130,3 +143,4 @@ let data=d3.csv("../Data/Influenza.csv").then(data => {
         .attr("height", d => HEIGHT - y(d.influenza_ED))
         .attr("fill", "blue")
 
+    });

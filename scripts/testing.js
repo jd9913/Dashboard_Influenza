@@ -1,7 +1,7 @@
 
 
 const getData = () => {
-    $.get("../data/hospital.json", (hospitalData) => {
+    $.get("../data/influenza.json", (hospitalData) => {
 
         let hospitalDataClean = Object.values(hospitalData);
 
@@ -11,22 +11,10 @@ const getData = () => {
 
 //global variables for linking to webEOC data
 
-let dataLineChartED = []; //array to hold daily data to generate line chart for ED patients 4/2020-current
-let dataLineChartAd = []; //array to hold daily data to generate line chart for Admit 4/2020-current
-let dataLineChartInp = []; //array to hold daily data to generate line chart for Inpatients 4/2020-current
-
-
-
-//number threshold levels so that the numbers can change colors based on their value
-
-let EDDataHighThreshold = 500; //threshold at which number changes color
-let EDDataLowThreshold = 150;
-let AdmitDataHighThreshold = 100;//threshold at which number changes color
-let AdmitDataLowThreshold = 50;
-let InptDataHighThreshold = 300;//threshold at which number changes color
-let InptDataLowThreshold = 100;
-
-
+let dataLineED = []; //array to hold daily data to generate line chart for ED patients 
+let dataLineAd = []; //array to hold daily data to generate line chart for Admit t
+let dataLineInp = []; //array to hold daily data to generate line chart for Inpatients 
+let dataLineIcu=[]; //array to hold daily data to generate line chart for ICU 
 
 //colors for the graphs
 
@@ -36,21 +24,14 @@ const color3 = '#FFCC00';
 const fontColor = '#504F4F';
 
 
-
-//Pie Charts
-const medSurgGraphEl = $('#medSurgBeds');  //Referencing the block for Medical Surgical bed data.
-const icuGraphEl = document.getElementById('IcuBeds'); //referencing the block for ICU data
-const ventGraphEl = $('#vents'); //referencing the block for ventilator data
-const pieChartLabels = ["Available", "COVID-19 +", "Other"];
-
-
 //Line graph
 
-const covidLineEl = document.getElementById('covidLine'); //referencing the block for the three covid positive lines
-let lineGraphLabels = []; //x axis labels for line dataset, Dates
-let lineGraphLineED = ['COVID + ED']; //line labels for ED patients line
-let lineGraphLineAd = ['COVID + Admits']; //line labels for Admitted patients lines
-let lineGraphLineInp = ['COVID + Inpatients']; //line label for inpatients line
+const fluLineEl = document.getElementById('fluLine'); //referencing the block for the four influenza positive lines
+let lineLabels = []; //x axis labels for line dataset, Dates
+let lineED = ['ED + Influenza']; //line labels for ED patients line
+let lineAdmit = ['Admits + Influenza']; //line labels for Admitted patients lines
+let lineInp = ['Inpatients + Influenza']; //line label for inpatients line
+let lineVent = ['Vents + Influenza']; //line label for inpatients line
 
 
 //current date in header
@@ -71,15 +52,15 @@ getCurrentDay();
 // populateAllVariables(allData)
 
 
-
-
-
 getData();
 
 
 function populateAllVariables(allData1) {
 
-    let dateFilter = '4/12/2020';
+
+    //filtering out dates that occurred prior to valid data for each category
+
+    let dateFilter = '9/20/2020';
 
     let validDates = allData1.filter(function (data, i) {
 
@@ -98,26 +79,32 @@ function populateAllVariables(allData1) {
     })
 
 
-    dataLineChartED = allData.map((data) => {
+    dataLineED = allData.map((data) => {
 
-        return (data.edCovidPts);
+        return (data.influenza_ED);
     });
 
 
-    dataLineChartAd = allData.map((data) => {
+    dataLineInp = allData.map((data) => {
 
-        return (data.covid_Admissions);
+        return (data.influenza_inpatients);
     });
 
 
-    dataLineChartInp = allData.map((data) => {
+    dataLineIcu = allData.map((data) => {
 
-        return (data.covid_Inpatients);
+        return (data.influenza_ICU);
+    });
+    
+    
+    dataLineVent = allData.map((data) => {
+
+        return (data.influenza_vent);
     });
 
 
 
-    lineGraphLabels = allData.map((data) => {
+    lineLabels = allData.map((data) => {
 
 
         return new Date(data.DataDate);
@@ -126,16 +113,16 @@ function populateAllVariables(allData1) {
 
 
 
-    //filtering for medsurge data to populate pie charts
-    let medsurgDataAvail = allData.map((data) => {
+    //filtering for data to populate squares
+    let EDDataAvail = allData.map((data) => {
 
-        return [(data.medSurgBed_Avail), (new Date(data.DataDate))];
+        return [(data.influenza_ED), (new Date(data.DataDate))];
     });
 
     //console.log(medsurgDataAvail);
 
-    function medsurgPieAvail() {
-        let max1 = medsurgDataAvail.reduce((a, b) => {
+    function EDPieAvail() {
+        let max1 = EDDataAvail.reduce((a, b) => {
 
             // console.log(a);
             // console.log(b);
@@ -148,30 +135,30 @@ function populateAllVariables(allData1) {
         return [max1[0]];
     }
 
-    let medsurgDataPos = allData.map((data) => {
-        return [(data.medSurg_InUseCovid), (new Date(data.DataDate))];
+    let inptFlu = allData.map((data) => {
+        return [(data.influenza_inpatients), (new Date(data.DataDate))];
     });
 
-    function medsurgPiePos() {
-        let max1 = medsurgDataPos.reduce((a, b) => { return a[1] > b[1] ? a : b; });
+    function inptPieFlu() {
+        let max1 = inptFlu.reduce((a, b) => { return a[1] > b[1] ? a : b; });
 
         return [max1[0]];
     }
 
-    let medsurgDataOther = allData.map((data) => {
+    let ventFlu = allData.map((data) => {
         return [(data.MedSurg_InUseOther), (new Date(data.DataDate))];
     });
 
 
-    function medsurgPieOther() {
-        let max1 = medsurgDataOther.reduce((a, b) => { return a[1] > b[1] ? a : b; });
+    function ventPieICU() {
+        let max1 = ventFlu.reduce((a, b) => { return a[1] > b[1] ? a : b; });
 
         return [max1[0]];
     }
 
 
     let icuDataAvail = allData.map((data) => {
-        return [(data.icuAdult_Avail), (new Date(data.DataDate))];
+        return [(data.influenza_ICU), (new Date(data.DataDate))];
     });
 
 
@@ -182,7 +169,7 @@ function populateAllVariables(allData1) {
     }
 
     let icuDataPos = allData.map((data) => {
-        return [(data.icuAdult_InUseCovid), (new Date(data.DataDate))];
+        return [(data.influenza_ICU), (new Date(data.DataDate))];
     });
 
 
